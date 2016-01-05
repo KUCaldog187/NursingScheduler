@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:util="http://www.springframework.org/schema/util"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+    http://www.springframework.org/schema/util 
+    http://www.springframework.org/schema/util/spring-util-4.0.xsd
+    http://www.springframework.org/schema/context
+    http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+	<bean id="nurseResource" class="org.springframework.core.io.ClassPathResource">
+	    <constructor-arg value="/net/calvineric/nursing/nurses.properties" />
+	</bean>
+
+	<util:property-path id="nursesFile" path="nurseResource.file" />
+
+    <bean id="nursingCollection" class="net.calvineric.nursing.NursingCollection">
+    	<constructor-arg ref="nursesFile"></constructor-arg>
+  	</bean>
+
+<!-- 
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource" destroy-method="close">
+        <property name="driverClassName" value="${jdbc.driverClassName}"/>
+        <property name="url" value="${jdbc.url}"/>
+        <property name="username" value="${jdbc.username}"/>
+        <property name="password" value="${jdbc.password}"/>
+    </bean>
+ -->
+ 
+    <context:property-placeholder location="classpath:/net/calvineric/nursing/jdbc/jdbc.properties"/>
+
+</beans>
