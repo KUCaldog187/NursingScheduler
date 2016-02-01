@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map.Entry;
-import java.util.Set;
 
-import net.calvineric.controller.BaseController;
 import net.calvineric.nursing.Employee;
 import net.calvineric.nursing.NursingCollection;
 
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/nurse")
-public class NursingController extends BaseController{
+public class NursingController implements ApplicationContextAware{
+	
+	private ApplicationContext applicationContext = null;
 	
 	private List<Employee> employeeListSON;
 	private List<Employee> employeeListRN;
@@ -63,6 +65,12 @@ public class NursingController extends BaseController{
 		}else if(employee.getPosition().equals("CNA")){
 			employeeListCNA.add(employee);
 		}
+	}
+	
+	@Override
+	public void setApplicationContext(final ApplicationContext applicationContext)
+			throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 
 }

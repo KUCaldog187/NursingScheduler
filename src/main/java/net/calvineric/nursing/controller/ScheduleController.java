@@ -6,27 +6,28 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 
+import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import net.calvineric.controller.BaseController;
 import net.calvineric.nursing.DailySchedule;
 import net.calvineric.nursing.Employee;
-import net.calvineric.nursing.NursingCalender;
 import net.calvineric.nursing.NursingCollection;
 import net.calvineric.nursing.ScheduleManager;
+import net.calvineric.nursing.Staffing;
 
 @Controller
 @RequestMapping("/schedule")
-public class ScheduleController extends BaseController {
+public class ScheduleController implements ApplicationContextAware {
 	
+	private ApplicationContext applicationContext = null;
 	
 	private List<Employee> employeeListSON;
 	private List<Employee> employeeListRN;
@@ -54,7 +55,8 @@ public class ScheduleController extends BaseController {
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month);
-		int daystoGenerate = calendar.getActualMaximum(Calendar.DATE);
+		calendar.set(Calendar.DATE, 1);
+		int daystoGenerate = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 		
 		String[] daysArray = new String[daystoGenerate];
 		
@@ -75,7 +77,7 @@ public class ScheduleController extends BaseController {
 		NursingCollection nurses = (NursingCollection)applicationContext.getBean("nursingCollection");
 		
 		try {
-			success = ScheduleManager.generateScheduleForEmployee(nurses.getNurseMap().get(id), month);
+			success = ScheduleManager.generateScheduleForEmployee(nurses.getNurseMap().get(id), year, month);
 //			ScheduleManager.loadEmployeeScheduleFromFile(nurses.getNurseMap().get(id));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -87,16 +89,62 @@ public class ScheduleController extends BaseController {
 		return "generate";
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value= "save/{id}/{month}/{day}/{value}")
-	public String saveScheduleForEmployee(ModelMap model, @PathVariable("id") Integer id, @PathVariable("month") Integer month, @PathVariable("day") Integer day, @PathVariable("value") String workCode){
+	@RequestMapping(method = RequestMethod.GET, value= "staff/{type}/{month}/{year}")
+	public String generateScheduleForEmployee(ModelMap model, @PathVariable("type") String type, @PathVariable("month") Integer month, @PathVariable("year") Integer year){
+		NursingCollection nurses = (NursingCollection)applicationContext.getBean("nursingCollection");
+		
+		employeeListSON = new ArrayList<Employee>();
+		employeeListRN = new ArrayList<Employee>();
+		employeeListLPN = new ArrayList<Employee>();
+		employeeListCNA = new ArrayList<Employee>();
+
+		Iterator<Entry<Integer, Employee>> mapIterator = nurses.getNurseMap().entrySet().iterator();
+		while(mapIterator.hasNext()){
+			Employee availableEmployee = mapIterator.next().getValue();
+				categorizeEmployee(availableEmployee);
+		}
+		
+		boolean success = true;
+		
+		try{
+			if(type.equalsIgnoreCase("all")){
+				
+				Staffing.staffingLogicSON(employeeListSON, month, year);
+				Staffing.staffingLogicRN(employeeListRN, month, year);
+				Staffing.staffingLogicLPN(employeeListLPN, month, year);
+				Staffing.staffingLogicCNA(employeeListCNA, month, year);
+				
+			}else if (type.equalsIgnoreCase("son")) {
+				Staffing.staffingLogicSON(employeeListSON, month, year);
+			}else if (type.equalsIgnoreCase("rn")) {
+				Staffing.staffingLogicRN(employeeListRN, month, year);
+			}else if (type.equalsIgnoreCase("lpn")) {
+				Staffing.staffingLogicLPN(employeeListLPN, month, year);
+			}else if (type.equalsIgnoreCase("cna")) {
+				Staffing.staffingLogicCNA(employeeListCNA, month, year);
+			}
+		}catch(IOException ex){
+			success = false;
+		}
+
+		model.addAttribute("success", success );
+	
+		return "generate";
+		
+	}
+	
+
+	
+	@RequestMapping(method = RequestMethod.GET, value= "save/{id}/{year}/{month}/{day}/{value}")
+	public String saveScheduleForEmployee(ModelMap model, @PathVariable("id") Integer id, @PathVariable("year") Integer year, @PathVariable("month") Integer month, @PathVariable("day") Integer day, @PathVariable("value") String workCode){
 		boolean success = false;
 		
 		NursingCollection nurses = (NursingCollection)applicationContext.getBean("nursingCollection");
 		
 		try {
-			nurses.getNurseMap().get(id).getYearlySchedule().getScheduleForMonth(month).getDailySchedule().get(day).setValue(workCode);
-			nurses.getNurseMap().get(id).getYearlySchedule().getScheduleForMonth(month).getDailySchedule().get(day).setLocked(true);
-			success = ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id));
+			nurses.getNurseMap().get(id).getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(day).setValue(workCode);
+			nurses.getNurseMap().get(id).getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(day).setLocked(true);
+			success = ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id), year);
 			success = true;
 		} catch (IOException e) {
 			success = false;
@@ -111,23 +159,23 @@ public class ScheduleController extends BaseController {
 		return "lockIt";
 	}
 	
-	@RequestMapping(method = RequestMethod.GET, value= "lock/{id}/{month}/{day}")
-	public String toggleLockScheduleForEmployee(ModelMap model, @PathVariable("id") Integer id, @PathVariable("month") Integer month, @PathVariable("day") Integer day){
+	@RequestMapping(method = RequestMethod.GET, value= "lock/{id}/{year}/{month}/{day}")
+	public String toggleLockScheduleForEmployee(ModelMap model, @PathVariable("id") Integer id, @PathVariable("year") Integer year, @PathVariable("month") Integer month, @PathVariable("day") Integer day){
 		boolean success = false;
 		
 		NursingCollection nurses = (NursingCollection)applicationContext.getBean("nursingCollection");
 		
-		DailySchedule dailySchedule = nurses.getNurseMap().get(id).getYearlySchedule().getScheduleForMonth(month).getDailySchedule().get(day);
+		DailySchedule dailySchedule = nurses.getNurseMap().get(id).getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(day);
 		
 		try {
 			
 			if(dailySchedule.isLocked()){
 				dailySchedule.setLocked(false);
-				ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id));
+				ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id), year);
 				success = false;
 			}else{
 				dailySchedule.setLocked(true);
-				ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id));
+				ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id), year);
 				success = true;
 			}
 
@@ -147,12 +195,11 @@ public class ScheduleController extends BaseController {
 	@RequestMapping(method = RequestMethod.GET, value= "/{id}/{month}/{year}")
 	public String getScheduleForEmployee(ModelMap model, @PathVariable("id") Integer id, @PathVariable("month") Integer month, @PathVariable("year") Integer year){
 		
-		NursingCollection nurses = (NursingCollection)applicationContext.getBean("nursingCollection");
-		
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
 		calendar.set(Calendar.MONTH, month);
-		int daysInMonth = calendar.getActualMaximum(Calendar.DATE);
+		calendar.set(Calendar.DATE, 1);
+		int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 		
 		String[] daysArray = new String[daysInMonth];
 		
@@ -166,6 +213,7 @@ public class ScheduleController extends BaseController {
 		model.addAttribute("daysArray", daysArray);
 		model.addAttribute("daysInMonth", daysInMonth);
 		model.addAttribute("month", month);
+		model.addAttribute("year", year);
 		
 		return "calendar";
 	}
@@ -208,5 +256,11 @@ public class ScheduleController extends BaseController {
 		}else if(employee.getPosition().equals("CNA")){
 			employeeListCNA.add(employee);
 		}
+	}
+	
+	@Override
+	public void setApplicationContext(final ApplicationContext applicationContext)
+			throws BeansException {
+		this.applicationContext = applicationContext;
 	}
 }

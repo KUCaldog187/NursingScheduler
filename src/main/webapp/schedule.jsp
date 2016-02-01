@@ -3,7 +3,7 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <head>
-<script src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="js/jquery-2.1.4.min.js"></script>
 <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
 <title>Schedule</title>
 </head>
@@ -29,7 +29,8 @@
 	  <option value="2016">2016</option>
 	</select>
 	<input type="button" value="GO" onclick="getEmployeeSchedule()"/>
-	<input type="button" value="GENERATE" onclick="generateEmployeeSchedule();getEmployeeSchedule()"/> <input id="generateId" size="1"/><p id="success"></div>
+	<input type="button" value="GENERATE" onclick="generateEmployeeSchedule()"/> <input id="generateId" size="1"/>
+	<input type="button" value="STAFF" onclick="staff()"/> <input id="staffId" size="1"/><p id="success">
 	<br>
 	
 <div id="dateresult">
@@ -60,6 +61,11 @@
 		
 		function showSuccess(retVal){
 			$("#success").html(retVal);
+			getEmployeeSchedule();
+		}
+		
+		function staff(){
+			$.get("/NursingScheduler/schedule/staff/"+$("#staffId").val()+"/"+$("#month").val()+"/"+$("#year").val(), showSuccess);
 		}
 	
 	</script>

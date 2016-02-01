@@ -24,7 +24,7 @@
 			<c:forEach var="i" begin="${month}" end="${month}">
 				<c:forEach var="z" begin="1" end="${daysInMonth}">
 					<c:choose>
-						<c:when test="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].locked}">
+						<c:when test="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].locked}">
 							<td style="background-color: red;">
 						</c:when>
 						<c:otherwise>
@@ -32,11 +32,11 @@
 						</c:otherwise>
 					</c:choose>
 					<c:choose>
-					    <c:when test="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].value.equals('B')}">
+					    <c:when test="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value.equals('B')}">
 					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
 					    </c:when>
 					    <c:otherwise>
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].value}"/>"  />
+					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
 					    </c:otherwise>
 					</c:choose>
 					</td>
@@ -53,7 +53,7 @@
 			<c:forEach var="i" begin="${month}" end="${month}">
 				<c:forEach var="z" begin="1" end="${daysInMonth}">
 					<c:choose>
-						<c:when test="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].locked}">
+						<c:when test="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].locked}">
 							<td style="background-color: red;">
 						</c:when>
 						<c:otherwise>
@@ -61,11 +61,11 @@
 						</c:otherwise>
 					</c:choose>
 					<c:choose>
-					    <c:when test="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].value.equals('B')}">
+					    <c:when test="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value.equals('B')}">
 					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
 					    </c:when>
 					    <c:otherwise>
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].value}"/>"  />
+					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
 					    </c:otherwise>
 					</c:choose>
 					</td>
@@ -82,7 +82,7 @@
 			<c:forEach var="i" begin="${month}" end="${month}">
 				<c:forEach var="z" begin="1" end="${daysInMonth}">
 					<c:choose>
-						<c:when test="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].locked}">
+						<c:when test="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].locked}">
 							<td style="background-color: red;">
 						</c:when>
 						<c:otherwise>
@@ -90,11 +90,11 @@
 						</c:otherwise>
 					</c:choose>
 					<c:choose>
-					    <c:when test="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].value.equals('B')}">
+					    <c:when test="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value.equals('B')}">
 					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
 					    </c:when>
 					    <c:otherwise>
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].value}"/>"  />
+					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
 					    </c:otherwise>
 					</c:choose>
 					</td>
@@ -111,7 +111,7 @@
 			<c:forEach var="i" begin="${month}" end="${month}">
 				<c:forEach var="z" begin="1" end="${daysInMonth}">
 					<c:choose>
-						<c:when test="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].locked}">
+						<c:when test="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].locked}">
 							<td style="background-color: red;">
 						</c:when>
 						<c:otherwise>
@@ -119,11 +119,11 @@
 						</c:otherwise>
 					</c:choose>
 					<c:choose>
-					    <c:when test="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].value.equals('B')}">
+					    <c:when test="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value.equals('B')}">
 					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
 					    </c:when>
 					    <c:otherwise>
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.yearlySchedule.monthlySchedule[i].dailySchedule[z].value}"/>"  />
+					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
 					    </c:otherwise>
 					</c:choose>
 					</td>
@@ -142,7 +142,7 @@ function saveAndLock(element){
 	var day = $(element).attr("day");
 	var workCode = $(element).val().toUpperCase();
 	$(element).val(workCode);
-	$.get("/NursingScheduler/schedule/save/"+workerid+"/"+month+"/"+day+"/"+workCode, lockIt);
+	$.get("/NursingScheduler/schedule/save/"+workerid+"/"+$("#year").val()+"/"+month+"/"+day+"/"+workCode, lockIt);
 }
 
 function lockIt(retVal){
@@ -170,7 +170,7 @@ function toggleLock(element){
 	var day = $(element).attr("day");
 	var workCode = $(element).val().toUpperCase();
 	
-	$.get("/NursingScheduler/schedule/lock/"+workerid+"/"+month+"/"+day, lockIt);
+	$.get("/NursingScheduler/schedule/lock/"+workerid+"/"+$("#year").val()+"/"+month+"/"+day, lockIt);
 }
 
 registerEnterKeyPress();

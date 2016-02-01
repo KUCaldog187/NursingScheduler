@@ -24,7 +24,8 @@ public class NursingCollection {
 				if(nurseMap == null){
 					nurseMap = new HashMap<Integer, Employee>();
 				}
-				nurseMap.put(Integer.parseInt(nurseInfo[0]), new Employee(Integer.parseInt(nurseInfo[0]), nurseInfo[1].split(",")[0], nurseInfo[1].split(",")[1], nurseInfo[2], nurseInfo[3]));
+				int year = 2015;
+				nurseMap.put(Integer.parseInt(nurseInfo[0]), new Employee(Integer.parseInt(nurseInfo[0]), nurseInfo[1].split(",")[0], nurseInfo[1].split(",")[1], nurseInfo[2], nurseInfo[3], year ));
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

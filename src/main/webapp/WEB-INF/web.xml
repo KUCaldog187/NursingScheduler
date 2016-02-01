@@ -9,12 +9,17 @@
       </servlet-class>
       <load-on-startup>1</load-on-startup>
    </servlet>
-
+   
    <servlet-mapping>
-      <servlet-name>BaseController</servlet-name>
-      <url-pattern>/</url-pattern>
+       <servlet-name>BaseController</servlet-name>
+       <url-pattern>/</url-pattern>
    </servlet-mapping>
    
+ 	<servlet-mapping>
+       <servlet-name>default</servlet-name>
+       <url-pattern>/js/*</url-pattern>
+   </servlet-mapping>
+ 
    <context-param>
     <param-name>contextConfigLocation</param-name>
        		<param-value>
@@ -28,5 +33,8 @@
    </listener-class>
 </listener>
    
+   <welcome-file-list>
+   	<welcome-file>welcome.jsp</welcome-file>
+   </welcome-file-list>
 
 </web-app>
