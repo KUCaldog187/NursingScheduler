@@ -120,7 +120,7 @@ public class YearlySchedule {
 		Iterator<Entry<Integer, MonthlySchedule>> monthlyIterator = this.monthlySchedule.entrySet().iterator();
 		while (monthlyIterator.hasNext()) {
 			Entry<Integer, MonthlySchedule> entry = (Entry<Integer, MonthlySchedule>) monthlyIterator.next();
-			result+=entry.getKey() + " " + entry.getValue().toString()+"\n";
+			result+= entry.getValue().getYearValue()+ " " +entry.getKey() + " " + entry.getValue().toString()+"\n";
 		}
 
 		return result;

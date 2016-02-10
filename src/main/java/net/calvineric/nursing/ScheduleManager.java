@@ -18,7 +18,7 @@ public class ScheduleManager {
 	
 	private String persistMethod = "FILE";
 	
-	public static boolean loadEmployeeScheduleFromFile(Employee employee, int year){
+	public static boolean loadEmployeeScheduleFromFile(Employee employee){
 		boolean success = true;
 		
 		Path basePath = Paths.get("C:\\schedules");
@@ -31,12 +31,13 @@ public class ScheduleManager {
 		    while ((line = reader.readLine()) != null) {
 		    	
 				StringTokenizer st = new StringTokenizer(line , "{, }", false);
+				String year = (String) st.nextElement();
 				String month = (String) st.nextElement();
 
 		        while (st.hasMoreElements()) {
 		        	String s = (String) st.nextElement();
 					String[] lineArray = s.split("=");
-					YearlySchedule yearlySchedule = employee.getYearlySchedule(year);
+					YearlySchedule yearlySchedule = employee.getYearlySchedule(Integer.parseInt(year));
 					MonthlySchedule monthlySchedule = yearlySchedule.getScheduleForMonth(Integer.parseInt(month)); 
 					DailySchedule dailySchedule = monthlySchedule.getDailySchedule().get(Integer.parseInt(lineArray[0]));
 					dailySchedule.setValue(lineArray[1].split(":")[0]);

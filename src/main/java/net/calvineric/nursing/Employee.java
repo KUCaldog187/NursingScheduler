@@ -22,11 +22,11 @@ public class Employee {
 		this.year = year;
 		this.yearlySchedule = new HashMap<Integer,YearlySchedule>(); 
 		addYearlySchedule(new YearlySchedule(year), year);
-		initializeSchedule(year);
+		initializeSchedule();
 	}
 	
-	private void initializeSchedule(int year) {
-		ScheduleManager.loadEmployeeScheduleFromFile(this, year);
+	private void initializeSchedule() {
+		ScheduleManager.loadEmployeeScheduleFromFile(this);
 	}
 
 	public int getId() {
@@ -62,6 +62,9 @@ public class Employee {
 	}
 
 	public YearlySchedule getYearlySchedule(int year) {
+		if(yearlySchedule.get(year) == null){
+			addYearlySchedule(new YearlySchedule(year), year);
+		}
 		return yearlySchedule.get(year);
 	}
 
