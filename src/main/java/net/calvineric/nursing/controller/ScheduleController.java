@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import net.calvineric.nursing.DailySchedule;
 import net.calvineric.nursing.Employee;
 import net.calvineric.nursing.NursingCollection;
+import net.calvineric.nursing.Schedule;
 import net.calvineric.nursing.ScheduleManager;
 import net.calvineric.nursing.Staffing;
 
@@ -142,8 +143,9 @@ public class ScheduleController implements ApplicationContextAware {
 		NursingCollection nurses = (NursingCollection)applicationContext.getBean("nursingCollection");
 		
 		try {
-			nurses.getNurseMap().get(id).getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(day).setValue(workCode);
-			nurses.getNurseMap().get(id).getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(day).setLocked(true);
+			Schedule schedue = nurses.getNurseMap().get(id).getSchedule();
+			schedue.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(day).setValue(workCode);
+			schedue.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(day).setLocked(true);
 			success = ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id), year);
 			success = true;
 		} catch (IOException e) {
@@ -165,7 +167,8 @@ public class ScheduleController implements ApplicationContextAware {
 		
 		NursingCollection nurses = (NursingCollection)applicationContext.getBean("nursingCollection");
 		
-		DailySchedule dailySchedule = nurses.getNurseMap().get(id).getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(day);
+		Schedule schedue = nurses.getNurseMap().get(id).getSchedule();
+		DailySchedule dailySchedule = schedue.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(day);
 		
 		try {
 			

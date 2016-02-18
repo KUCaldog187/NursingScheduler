@@ -6,10 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import com.sun.xml.internal.ws.policy.privateutil.PolicyUtils.Collections;
-
 import net.calvineric.nursing.DailySchedule;
-import net.calvineric.nursing.Employee;
 import net.calvineric.nursing.MonthlySchedule;
 import net.calvineric.nursing.YearlySchedule;
 import net.calvineric.nursing.constants.WorkCodeConstants;
@@ -166,17 +163,19 @@ public class RulesEngine implements WorkCodeConstants {
 
 		Set<DailySchedule> week = yearlySchedule.getWeeks().get(weekofyear);
 		int daysPicked = 0;
+		int daysPickedPreScan = 0;
+		
+		// PRESCAN FOR DAYS PICKED
+		for (DailySchedule day : week) { 
+			if(day.isLocked() && day.getValue().equals(DAY_OFF)){
+				daysPicked = ++daysPickedPreScan;
+			}
+		}
+
 		// Randomly generate up to 2 days off in the week
 		do{
-			daysPicked = 0;
-			
-			// PRESCAN FOR DAYS PICKED
-			for (DailySchedule day : week) { 
-				if(day.isLocked() && day.getValue().equals(DAY_OFF)){
-					daysPicked++;
-				}
-			}
-			
+			daysPicked = daysPickedPreScan; // Reset daysPicked TODO fix this maybe, must pick 2 days in 1 pass or next pass will overwrite
+
 			for (DailySchedule day : week) {
 				if(!day.isLocked()){
 					if(daysPicked < 2 ){
@@ -208,24 +207,24 @@ public class RulesEngine implements WorkCodeConstants {
 		
 		for(int i=1;i<=numDays;i++){
 			calendar.set(Calendar.DATE, i);
-			weekSet.add(calendar.get(calendar.get(Calendar.WEEK_OF_YEAR)));
+			weekSet.add(calendar.get(Calendar.WEEK_OF_YEAR));
 		}
 		
 
 		for (Integer weekofyear : weekSet) {
 			Set<DailySchedule> week = yearlySchedule.getWeeks().get(weekofyear);
 			int daysPicked = 0;
+			int daysPickedPreScan = 0;
+			// PRESCAN FOR DAYS PICKED
+			for (DailySchedule dailySchedule : week) { 
+				if(dailySchedule.isLocked() && dailySchedule.getValue().equals(DAY_OFF)){
+					daysPicked = ++daysPickedPreScan;
+				}
+			}
+			
 			// Randomly generate up to 2 days off in the week
 			do{
-				daysPicked = 0;
-				
-				// PRESCAN FOR DAYS PICKED
-				for (DailySchedule dailySchedule : week) { 
-					if(dailySchedule.isLocked() && dailySchedule.getValue().equals(DAY_OFF)){
-						daysPicked++;
-					}
-				}
-				
+				daysPicked = daysPickedPreScan; // Reset daysPicked TODO fix this maybe, must pick 2 days in 1 pass or next pass will overwrite
 				for (DailySchedule dailySchedule : week) {
 					if(!dailySchedule.isLocked()){
 						if(daysPicked < 2 ){

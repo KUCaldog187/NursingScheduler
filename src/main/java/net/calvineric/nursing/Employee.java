@@ -1,7 +1,5 @@
 package net.calvineric.nursing;
 
-import java.util.HashMap;
-import java.util.Map;
 
 public class Employee {
 	
@@ -10,8 +8,7 @@ public class Employee {
 	private String firstName;
 	private String position;
 	private String defaultShift;
-	private int year;
-	private Map<Integer, YearlySchedule> yearlySchedule;
+	private Schedule schedule;
 	
 	public Employee(int id, String lastName, String firstName, String position, String defaultShift, int year) {
 		this.id = id;
@@ -19,9 +16,8 @@ public class Employee {
 		this.firstName = firstName;
 		this.position = position;
 		this.defaultShift = defaultShift;
-		this.year = year;
-		this.yearlySchedule = new HashMap<Integer,YearlySchedule>(); 
-		addYearlySchedule(new YearlySchedule(year), year);
+		this.schedule = new Schedule(); 
+		this.schedule.addYearlySchedule(new YearlySchedule(year));
 		initializeSchedule();
 	}
 	
@@ -61,31 +57,12 @@ public class Employee {
 		this.defaultShift = defaultShift;
 	}
 
-	public YearlySchedule getYearlySchedule(int year) {
-		if(yearlySchedule.get(year) == null){
-			addYearlySchedule(new YearlySchedule(year), year);
-		}
-		return yearlySchedule.get(year);
+	public Schedule getSchedule() {
+		return schedule;
 	}
 
-	public void addYearlySchedule(YearlySchedule yearlySchedule, int year) {
-		this.yearlySchedule.put(year, yearlySchedule);
+	public void setSchedule(Schedule schedule) {
+		this.schedule = schedule;
 	}
-
-	public Map<Integer, YearlySchedule> getYearlySchedule() {
-		return yearlySchedule;
-	}
-
-	public void setYearlySchedule(Map<Integer, YearlySchedule> yearlySchedule) {
-		this.yearlySchedule = yearlySchedule;
-	}
-
-	public int getYear() {
-		return year;
-	}
-
-	public void setYear(int year) {
-		this.year = year;
-	}
-
+	
 }

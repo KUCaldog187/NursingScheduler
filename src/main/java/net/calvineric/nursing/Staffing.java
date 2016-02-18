@@ -21,7 +21,8 @@ public class Staffing {
 		do{
 			for(int i=1;i<=daysToGenerate;i++){
 				for(Employee employee : employeeListSON){
-					DailySchedule dailySchedule = employee.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(i);
+					Schedule schedule = employee.getSchedule();
+					DailySchedule dailySchedule = schedule.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(i);
 					if(!dailySchedule.isLocked()){
 						dailySchedule.setValue(WorkCodeConstants.WORKING);
 						ScheduleManager.saveEmployeeToFile(employee,year);
@@ -44,7 +45,8 @@ public class Staffing {
 		do{
 			for(int i=1;i<=daysToGenerate;i++){
 				for(Employee employee : employeeList){
-					DailySchedule dailySchedule = employee.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(i);
+					Schedule schedule = employee.getSchedule();
+					DailySchedule dailySchedule = schedule.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(i);
 					if(!dailySchedule.isLocked()){
 						dailySchedule.setValue(WorkCodeConstants.WORKING);
 						ScheduleManager.saveEmployeeToFile(employee, year);
@@ -81,7 +83,8 @@ public class Staffing {
 		do{
 			for(int i=1;i<=daysToGenerate;i++){
 				for(Employee employee : employeeList){
-					YearlySchedule yearlySchedule = employee.getYearlySchedule(year);
+					Schedule schedule = employee.getSchedule();
+					YearlySchedule yearlySchedule = schedule.getYearlySchedule(year);
 					MonthlySchedule monthlySchedule = yearlySchedule.getScheduleForMonth(month);
 					DailySchedule dailySchedule = monthlySchedule.getDailySchedule().get(i);
 					if(RulesEngine.isEligibleToWork(yearlySchedule, quater, monthlySchedule, dailySchedule)){
@@ -106,7 +109,8 @@ public class Staffing {
 		do{
 			for(int i=1;i<=daysToGenerate;i++){
 				for(Employee employee : employeeList){
-					DailySchedule dailySchedule = employee.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(i);
+					Schedule schedule = employee.getSchedule();
+					DailySchedule dailySchedule = schedule.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(i);
 					if(!dailySchedule.isLocked()){
 						dailySchedule.setValue(WorkCodeConstants.WORKING);
 						ScheduleManager.saveEmployeeToFile(employee, year);
