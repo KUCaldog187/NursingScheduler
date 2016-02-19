@@ -9,13 +9,27 @@ import java.util.Set;
 
 public class Schedule {
 	
+	private final static int RANGE_LIMIT = 5;
 	private Map<Integer, YearlySchedule> yearlySchedule = new HashMap<Integer, YearlySchedule>();
 	
 	public YearlySchedule getYearlySchedule(int year) {
-		if(yearlySchedule.get(year) == null){
+		if(yearlySchedule.get(year) == null && !exceedRange(year)){
 			addYearlySchedule(new YearlySchedule(year));
 		}
 		return yearlySchedule.get(year);
+	}
+
+	// Only generate schedule for 5 years +- current year
+	private boolean exceedRange(int year) {
+		boolean exceeds = false;
+		int currentYear = Calendar.getInstance().get(Calendar.YEAR);
+		int upperRange = currentYear + RANGE_LIMIT;
+		int lowerRange = currentYear - RANGE_LIMIT;
+		
+		if(year < lowerRange ||  year > upperRange){
+			exceeds = true;
+		}
+		return exceeds;
 	}
 
 	public void addYearlySchedule(YearlySchedule yearlySchedule) {
@@ -31,6 +45,7 @@ public class Schedule {
 		this.yearlySchedule = yearlySchedule;
 	}
 	
+	// TODO REFACTOR THIS METHOD
 	private void populateWeeks(YearlySchedule yearlySchedule) {
 		Map<Integer, Set<DailySchedule>> weeksMap = yearlySchedule.getWeeks();
 		
@@ -63,10 +78,10 @@ public class Schedule {
 					int daysInNextMonth = (day+6) - numDays;
 					
 					// GET DAYS IN NEXT MONTH
-					if(monthSchedule.getMonthValue()+1 < 12){ // IF EXCEEDS CURRENT CALENDAR HANDLE IN ESLE BLOCK 
-						MonthlySchedule nextMonthScheudle = getScheduleForMonth(monthSchedule.getMonthValue()+1, yearlySchedule.getYearValue()); // GET NEXT MONTH
+					if(monthSchedule.getMonthValue()+1 <= 11){ // IF EXCEEDS CURRENT CALENDAR HANDLE IN ESLE BLOCK 
+						MonthlySchedule nextMonthSchedule = getScheduleForMonth(monthSchedule.getMonthValue()+1, yearlySchedule.getYearValue()); // GET NEXT MONTH
 						for(int n = 1; n<=daysInNextMonth; n++){
-							week.add(nextMonthScheudle.getDailySchedule().get(n));
+							week.add(nextMonthSchedule.getDailySchedule().get(n));
 						}
 						
 						// GET DAYS IN CURRENT MONTH
@@ -75,6 +90,18 @@ public class Schedule {
 						}
 					}else{
 						// TODO HANDLE ROLL OVER INTO NEXT YEAR
+						// TODO SHOULD SCHEDULE CONSIDER ROLLING OVER INTO NEXT AND PREVIOUS YEARS???
+						if(!exceedRange(yearlySchedule.getYearValue()-1)){
+							MonthlySchedule nextMonthScheudle = getScheduleForMonth(0, yearlySchedule.getYearValue()+1); // GET JANUARY  MONTH OF NEXT YEAR
+							for(int n = 1; n<=daysInNextMonth; n++){
+								week.add(nextMonthScheudle.getDailySchedule().get(n));
+							}
+							
+							// GET DAYS IN CURRENT MONTH
+							for(int n = day; n<=numDays; n++){
+								week.add(monthSchedule.getDailySchedule().get(n));
+							}
+						}
 					}
 					break; // DONE WITH CURRENT MONTH NO NEED TO CONTINUE LOOPING OVER MONTH
 				}else if(day-dayofweek < 0){ // WEEK EXTENDS INTO PREVIOUS MONTH
@@ -82,13 +109,13 @@ public class Schedule {
 					int daysInCurrentMonth = 7-daysInPreviousMonth;
 					
 					// GET DAYS IN PREVIOUS MONTH
-					if(monthSchedule.getMonthValue()-1 > 0){ // IF PRECEEDS CURRENT CALENDAR HANDLE IN ESLE BLOCK
-						MonthlySchedule previousMonthScheudle = getScheduleForMonth(monthSchedule.getMonthValue()-1, yearlySchedule.getYearValue()); // GET PREVIOUS MONTH
-						calendar.set(Calendar.MONTH, previousMonthScheudle.getMonthValue());
+					if(monthSchedule.getMonthValue()-1 >= 0){ // IF PRECEEDS CURRENT CALENDAR HANDLE IN ESLE BLOCK
+						MonthlySchedule previousMonthSchedule = getScheduleForMonth(monthSchedule.getMonthValue()-1, yearlySchedule.getYearValue()); // GET PREVIOUS MONTH
+						calendar.set(Calendar.MONTH, previousMonthSchedule.getMonthValue());
 						int numDaysInPreviousMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 						
-						for(int n = numDaysInPreviousMonth-(daysInPreviousMonth-1); n<=numDaysInPreviousMonth; n++){
-							week.add(previousMonthScheudle.getDailySchedule().get(n));
+						for(int n = numDaysInPreviousMonth-(daysInPreviousMonth-1); n<=numDaysInPreviousMonth; n++){ // WHICH DAY TO START ON IN PREVIOUS MONTH
+							week.add(previousMonthSchedule.getDailySchedule().get(n));
 						}
 						calendar.set(Calendar.MONTH, monthSchedule.getMonthValue()); // RESET CALENDAR MONTH BACK TO CURRENT
 						
@@ -97,7 +124,24 @@ public class Schedule {
 							week.add(monthSchedule.getDailySchedule().get(n));
 						}
 					}else{
-						// TODO HANDLE ROLL OVER INTO PREVIOUS YEAR
+						// TODO HANDLE ROLL OVER INTO PREVIOUS YEAR  **DONE**
+						if(!exceedRange(yearlySchedule.getYearValue()-1)){
+							MonthlySchedule previousMonthSchedule = getScheduleForMonth(11, yearlySchedule.getYearValue()-1); // GET DECEMEBER MONTH OF PREVIOUS YEAR
+							calendar.set(Calendar.MONTH, previousMonthSchedule.getMonthValue());
+							calendar.set(Calendar.YEAR, previousMonthSchedule.getYearValue());
+							int numDaysInPreviousMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+							
+							for(int n = numDaysInPreviousMonth-(daysInPreviousMonth-1); n<=numDaysInPreviousMonth; n++){ // WHICH DAY TO START ON IN PREVIOUS MONTH
+								week.add(previousMonthSchedule.getDailySchedule().get(n));
+							}
+							calendar.set(Calendar.MONTH, monthSchedule.getMonthValue()); // RESET CALENDAR MONTH BACK TO CURRENT
+							calendar.set(Calendar.YEAR, monthSchedule.getYearValue()); // RESET CALENDAR YEAR BACK TO CURRENT
+							
+							// GET DAYS IN CURRENT MONTH
+							for(int n = day; n<day+daysInCurrentMonth; n++){
+								week.add(monthSchedule.getDailySchedule().get(n));
+							}
+						}
 					}
 					day += (daysInCurrentMonth-1); // Increment to the next week  (-1 because ITERATION WITH DO A ++ )
 				}
@@ -106,7 +150,14 @@ public class Schedule {
 	}
 	
 	public MonthlySchedule getScheduleForMonth(int month, int year) {
-		return yearlySchedule.get(year).getScheduleForMonth(month);
+		MonthlySchedule schedule = null;
+		try{
+			schedule =  this.getYearlySchedule(year).getScheduleForMonth(month);
+		}catch(NullPointerException ex){
+			System.out.println();
+		}
+		
+		return schedule;
 	}
 
 }

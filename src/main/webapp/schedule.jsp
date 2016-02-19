@@ -25,8 +25,10 @@
 	</select>
  YEAR:
  	<select id="year">
+ 	<option value="2015">2014</option>
 	  <option value="2015">2015</option>
 	  <option value="2016">2016</option>
+	  <option value="2015">2017</option>
 	</select>
 	<input type="button" value="GO" onclick="getEmployeeSchedule()"/>
 	<input type="button" value="GENERATE" onclick="generateEmployeeSchedule()"/> <input id="generateId" size="1"/>
