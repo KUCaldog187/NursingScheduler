@@ -286,6 +286,7 @@ public class RulesEngine implements WorkCodeConstants {
 			obeys = true;
 		}else if(daysAlreadyOffForWeek > 2){ // THIS WILL CLEAR EXTRA GENERATED DAYS
 			random2DaysPerWeek(yearlySchedule, dailySchedule); 
+			obeys = true;
 		}else{
 			do{
 				random2DaysPerWeek(yearlySchedule, dailySchedule);
@@ -318,9 +319,8 @@ public class RulesEngine implements WorkCodeConstants {
 							// TODO HANDLE NEXT YEAR 
 						}else{
 							Set<DailySchedule> week2 = yearlySchedule.getWeeks().get(nextWeek);
+							int nextDay = dailySchedule.nextDay(); // HANDLE LAST DAY OF MONTH INTO FIRST DAY OF NEXT MONTH
 							for (DailySchedule dailySchedule2 : week2) {
-								int numDays = calendar.getActualMaximum(Calendar.DATE);
-								int nextDay = dailySchedule.getDayValue()+1>numDays ? 1:dailySchedule.getDayValue()+1; // HANDLE LAST DAY OF MONTH INTO FIRST DAY OF NEXT MONTH
 								if(dailySchedule2.getDayValue() == nextDay){ 
 									if(dailySchedule.getValue().equals(DAY_OFF) && dailySchedule2.getValue().equals(DAY_OFF)){
 										dailySchedule.setLocked(true);
@@ -384,7 +384,9 @@ public class RulesEngine implements WorkCodeConstants {
 		List<Integer> sortedList = new ArrayList<Integer>();
 		sortedList.addAll(weekSet);
 		
-		java.util.Collections.sort(sortedList);
+	//	java.util.Collections.sort(sortedList);
+		java.util.Collections.shuffle(sortedList);
+		
 		return sortedList;
 	}
 	
@@ -416,7 +418,7 @@ public class RulesEngine implements WorkCodeConstants {
 						if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
 							Set<DailySchedule> week2 = yearlySchedule.getWeeks().get(weekofyear+1); // GET THE NEXT WEEK
 							for (DailySchedule dailySchedule2 : week2) {
-								if(dailySchedule2.getDayValue() == dailySchedule.getDayValue()+1){
+								if(dailySchedule2.getDayValue() == dailySchedule.nextDay()){
 									if(!dailySchedule.getValue().equals(DAY_OFF) || !dailySchedule2.getValue().equals(DAY_OFF)){ 
 										if(!dailySchedule.isLocked() && !dailySchedule2.isLocked()){
 											dailySchedule.setValue(DAY_OFF);

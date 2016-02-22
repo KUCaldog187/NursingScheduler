@@ -9,6 +9,8 @@ import net.calvineric.nursing.rules.RulesEngine;
 
 public class Staffing {
 
+	private static final int LPNS_NEEDED = 2;
+
 	public static void staffingLogicSON(List<Employee> employeeListSON, int month, int year) throws IOException{
 		
 		Calendar calendar = Calendar.getInstance();
@@ -82,14 +84,18 @@ public class Staffing {
 		boolean nursesStillNeeded = true;
 		do{
 			for(int i=1;i<=daysToGenerate;i++){
-				for(Employee employee : employeeList){
-					Schedule schedule = employee.getSchedule();
-					YearlySchedule yearlySchedule = schedule.getYearlySchedule(year);
-					MonthlySchedule monthlySchedule = yearlySchedule.getScheduleForMonth(month);
-					DailySchedule dailySchedule = monthlySchedule.getDailySchedule().get(i);
-					if(RulesEngine.isEligibleToWork(yearlySchedule, quater, monthlySchedule, dailySchedule)){
-						dailySchedule.setValue("T");
-						ScheduleManager.saveEmployeeToFile(employee, year);
+				if(enoughLPNScheduled(employeeList, year, month, i)){
+					continue;
+				}else{
+					for(Employee employee : employeeList){
+						Schedule schedule = employee.getSchedule();
+						YearlySchedule yearlySchedule = schedule.getYearlySchedule(year);
+						MonthlySchedule monthlySchedule = yearlySchedule.getScheduleForMonth(month);
+						DailySchedule dailySchedule = monthlySchedule.getDailySchedule().get(i);
+						if(RulesEngine.isEligibleToWork(yearlySchedule, quater, monthlySchedule, dailySchedule)){
+							dailySchedule.setValue(WorkCodeConstants.WORKING);
+							ScheduleManager.saveEmployeeToFile(employee, year);
+						}
 					}
 				}
 			}
@@ -97,6 +103,24 @@ public class Staffing {
 		}while(nursesStillNeeded);
 	}
 	
+	private static boolean enoughLPNScheduled(List<Employee> employeeList, int year, int month, int day) {
+		int lpnsScheduled = 0;
+		for(Employee employee : employeeList){
+			Schedule schedule = employee.getSchedule();
+			YearlySchedule yearlySchedule = schedule.getYearlySchedule(year);
+			MonthlySchedule monthlySchedule = yearlySchedule.getScheduleForMonth(month);
+			DailySchedule dailySchedule = monthlySchedule.getDailySchedule().get(day);
+			if(dailySchedule.getValue().equals(WorkCodeConstants.WORKING)){
+				lpnsScheduled++;
+			}
+		}
+		if(lpnsScheduled >= LPNS_NEEDED){
+			return true;
+		}else{
+			return false;
+		}
+	}
+
 	public static void staffingLogicCNA(List<Employee> employeeList, int month, int year) throws IOException{
 		
 		Calendar calendar = Calendar.getInstance();

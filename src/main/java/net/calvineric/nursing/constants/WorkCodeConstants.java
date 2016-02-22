@@ -15,5 +15,6 @@ public interface WorkCodeConstants {
 	public final String JURY_DUTY = "JD";
 	public final String UNION_DAY = "UD";
 	public final String WORKMENS_COMP = "WC";
+	public final String NEUTRAL = "T";
 
 }

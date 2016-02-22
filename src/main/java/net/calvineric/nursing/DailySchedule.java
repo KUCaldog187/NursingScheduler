@@ -1,5 +1,7 @@
 package net.calvineric.nursing;
 
+import java.util.Calendar;
+
 import net.calvineric.nursing.constants.WorkCodeConstants;
 
 public class DailySchedule {
@@ -7,7 +9,7 @@ public class DailySchedule {
 	private int monthValue;
 	private int yearValue;
 	private int dayValue;
-	private String value = WorkCodeConstants.WORKING;
+	private String value = WorkCodeConstants.NEUTRAL;
 	private boolean locked;
 	
 	public DailySchedule(int dayValue, int month, int year) {
@@ -48,6 +50,17 @@ public class DailySchedule {
 	}
 	public void setMonthValue(int monthValue) {
 		this.monthValue = monthValue;
+	}
+	public int nextDay(){
+		int nextDay = dayValue;
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, this.getYearValue());
+		calendar.set(Calendar.MONTH, this.getMonthValue());
+		calendar.set(Calendar.DATE, this.getDayValue());
+		int numDays = calendar.getActualMaximum(Calendar.DATE);
+		nextDay = this.getDayValue()+1>numDays ? 1:this.getDayValue()+1; // HANDLE LAST DAY OF MONTH INTO FIRST DAY OF NEXT MONTH
+		return nextDay;
+		
 	}
 	
 }
