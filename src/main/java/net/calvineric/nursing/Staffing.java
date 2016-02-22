@@ -27,7 +27,7 @@ public class Staffing {
 					DailySchedule dailySchedule = schedule.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(i);
 					if(!dailySchedule.isLocked()){
 						dailySchedule.setValue(WorkCodeConstants.WORKING);
-						ScheduleManager.saveEmployeeToFile(employee,year);
+						ScheduleManager.saveEmployeeToFile(employee);
 					}
 				}
 			}
@@ -51,7 +51,7 @@ public class Staffing {
 					DailySchedule dailySchedule = schedule.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(i);
 					if(!dailySchedule.isLocked()){
 						dailySchedule.setValue(WorkCodeConstants.WORKING);
-						ScheduleManager.saveEmployeeToFile(employee, year);
+						ScheduleManager.saveEmployeeToFile(employee);
 					}
 				}
 			}
@@ -94,7 +94,7 @@ public class Staffing {
 						DailySchedule dailySchedule = monthlySchedule.getDailySchedule().get(i);
 						if(RulesEngine.isEligibleToWork(yearlySchedule, quater, monthlySchedule, dailySchedule)){
 							dailySchedule.setValue(WorkCodeConstants.WORKING);
-							ScheduleManager.saveEmployeeToFile(employee, year);
+							ScheduleManager.saveEmployeeToFile(employee);
 						}
 					}
 				}
@@ -137,7 +137,7 @@ public class Staffing {
 					DailySchedule dailySchedule = schedule.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(i);
 					if(!dailySchedule.isLocked()){
 						dailySchedule.setValue(WorkCodeConstants.WORKING);
-						ScheduleManager.saveEmployeeToFile(employee, year);
+						ScheduleManager.saveEmployeeToFile(employee);
 					}
 				}
 			}

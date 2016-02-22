@@ -67,12 +67,12 @@ public class ScheduleManager {
 		}
 		MonthlySchedule monthSchedule = yearlySchedule.getScheduleForMonth(month);
 		RulesEngine.applyRules(yearlySchedule, monthSchedule);
-		success = saveEmployeeToFile(employee, year);
+		success = saveEmployeeToFile(employee);
 		return success;
 		
 	}
 	
-	public static boolean saveEmployeeToFile(Employee employee, int year) throws IOException{
+	public static boolean saveEmployeeToFile(Employee employee) throws IOException{
 		boolean success = false;
 		
 		Charset charset = Charset.forName("US-ASCII");
@@ -90,7 +90,7 @@ public class ScheduleManager {
 		
 		try (BufferedWriter writer = Files.newBufferedWriter(fullFile, charset, StandardOpenOption.CREATE,StandardOpenOption.TRUNCATE_EXISTING )) {
 			Schedule schedule = employee.getSchedule();
-			String output = schedule.getYearlySchedule(year).toString();
+			String output = schedule.toString();
 		    writer.write(output, 0, output.length());
 		} catch (IOException x) {
 		    x.printStackTrace();

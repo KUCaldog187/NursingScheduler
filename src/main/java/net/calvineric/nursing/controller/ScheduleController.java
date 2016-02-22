@@ -146,7 +146,7 @@ public class ScheduleController implements ApplicationContextAware {
 			Schedule schedue = nurses.getNurseMap().get(id).getSchedule();
 			schedue.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(day).setValue(workCode);
 			schedue.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(day).setLocked(true);
-			success = ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id), year);
+			success = ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id));
 			success = true;
 		} catch (IOException e) {
 			success = false;
@@ -174,11 +174,11 @@ public class ScheduleController implements ApplicationContextAware {
 			
 			if(dailySchedule.isLocked()){
 				dailySchedule.setLocked(false);
-				ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id), year);
+				ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id));
 				success = false;
 			}else{
 				dailySchedule.setLocked(true);
-				ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id), year);
+				ScheduleManager.saveEmployeeToFile(nurses.getNurseMap().get(id));
 				success = true;
 			}
 

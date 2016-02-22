@@ -63,7 +63,21 @@ public class Schedule {
 				int dayofweek = calendar.get(Calendar.DAY_OF_WEEK);
 				int weekofyear = calendar.get(Calendar.WEEK_OF_YEAR);
 
-				Set<DailySchedule> week = weeksMap.get(weekofyear);
+				Set<DailySchedule> week = null;
+				if(monthSchedule.getMonthValue() == 11 && weekofyear == 1){  // HANDLE 1st WEEK OF NEXT YEAR
+					YearlySchedule nextyear = getYearlySchedule(yearlySchedule.getYearValue()+1);
+					if(nextyear == null){
+						// dont generate anything 
+						// advance iterator to end
+						day = numDays;
+						continue;
+					}else{
+						week = nextyear.getWeeks().get(weekofyear);
+					}
+				}else{
+					week = weeksMap.get(weekofyear);
+				}
+				
 				if(week == null){
 					week = new HashSet<DailySchedule>();
 					weeksMap.put(weekofyear, week);
@@ -158,6 +172,15 @@ public class Schedule {
 		}
 		
 		return schedule;
+	}
+	
+	@Override
+	public String toString() {
+		String result = "";
+		for(YearlySchedule schedule: this.yearlySchedule.values()){
+			result += schedule.toString() + "\n";
+		}
+		return result;
 	}
 
 }
