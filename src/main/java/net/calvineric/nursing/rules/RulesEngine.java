@@ -8,6 +8,7 @@ import java.util.Set;
 
 import net.calvineric.nursing.DailySchedule;
 import net.calvineric.nursing.MonthlySchedule;
+import net.calvineric.nursing.ScheduleManager;
 import net.calvineric.nursing.YearlySchedule;
 import net.calvineric.nursing.constants.WorkCodeConstants;
 
@@ -301,11 +302,12 @@ public class RulesEngine implements WorkCodeConstants {
 
 		
 		Calendar calendar = Calendar.getInstance();
-		List<Integer> sortedList = buildSortedList(yearlySchedule, quater);
+		List<Integer> weekList = ScheduleManager.buildWeekList(yearlySchedule, quater);
+		java.util.Collections.shuffle(weekList);
 		
 		int weekendsOff = 0;
 		
-		for (Integer weekofyear : sortedList) {
+		for (Integer weekofyear : weekList) {
 			Set<DailySchedule> week = yearlySchedule.getWeeks().get(weekofyear);
 			for (DailySchedule dailySchedule : week) {
 				if(dailySchedule.getYearValue() == yearlySchedule.getYearValue()){
@@ -338,57 +340,17 @@ public class RulesEngine implements WorkCodeConstants {
 		return weekendsOff;
 	}
 	
-	private static List<Integer> buildSortedList(YearlySchedule yearlySchedule, int quater){
-		
-		int startingMonth = 0;
-		int endingMonth = 0;
-		
-		switch (quater) {
-		case 1:
-			startingMonth = 0;
-			endingMonth = 2;
-			break;
-		case 2:
-			startingMonth = 3;
-			endingMonth = 5;
-			break;
-		case 3:
-			startingMonth = 6;
-			endingMonth = 8;
-			break;
-		case 4:
-			startingMonth = 9;
-			endingMonth = 11;
-			break;
-		default:
-			startingMonth = 0;
-			endingMonth = 2;
-			break;
+	
+	// TODO NOT THREAD SAFE!!!
+	public static List<Integer> buildEveryOtherWeekendList(List<Integer> weekendList){
+		List<Integer> everyOtherList = new ArrayList<Integer>();
+		java.util.Collections.sort(weekendList); 
+		for(int i=0; i<weekendList.size();i=+2){
+			everyOtherList.add(weekendList.get(i));
 		}
-		
-		Set<Integer> weekSet = new HashSet<Integer>();
-		Calendar calendar = Calendar.getInstance();
-		// CHECK WEEKEND PAIRS TO SEE IF BOTH SAT AND SUN ARE OFF. 
-		for(int i=startingMonth; i<=endingMonth; i++){			
-			calendar.set(Calendar.YEAR, yearlySchedule.getYearValue());
-			calendar.set(Calendar.MONTH, i);
-			calendar.set(Calendar.DATE, 1);
-			int numDays = calendar.getActualMaximum(Calendar.DATE);
-			
-			for(int x=1;x<=numDays;x++){
-				calendar.set(Calendar.DATE, x);
-				weekSet.add(calendar.get(Calendar.WEEK_OF_YEAR));
-			}
-		}
-		
-		List<Integer> sortedList = new ArrayList<Integer>();
-		sortedList.addAll(weekSet);
-		
-	//	java.util.Collections.sort(sortedList);
-		java.util.Collections.shuffle(sortedList);
-		
-		return sortedList;
+		return everyOtherList;
 	}
+	
 	
 	public static boolean obeysQuaterlyRules(YearlySchedule yearlySchedule, int quater){
 		boolean obeys = false;
@@ -400,7 +362,7 @@ public class RulesEngine implements WorkCodeConstants {
 		
 		weekendsOff = calculateWeekendsOff(yearlySchedule, quater);
 		
-		List<Integer> sortedList = buildSortedList(yearlySchedule, quater);
+		List<Integer> sortedList = ScheduleManager.buildWeekList(yearlySchedule, quater);
 		
 		if(weekendsOff >= weekendsOffNeeded){
 			obeys = true;

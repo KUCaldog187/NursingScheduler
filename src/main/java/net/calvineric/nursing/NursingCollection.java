@@ -4,7 +4,9 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class NursingCollection {
@@ -25,7 +27,22 @@ public class NursingCollection {
 					nurseMap = new HashMap<Integer, Employee>();
 				}
 				int year = 2015;
-				nurseMap.put(Integer.parseInt(nurseInfo[0]), new Employee(Integer.parseInt(nurseInfo[0]), nurseInfo[1].split(",")[0], nurseInfo[1].split(",")[1], nurseInfo[2], nurseInfo[3], year ));
+				int id = Integer.parseInt(nurseInfo[0]);
+				String lastName = nurseInfo[1].split(",")[0];
+				String firstName = nurseInfo[1].split(",")[1];
+				String position = nurseInfo[2];
+				String defaultShift = nurseInfo[3];
+				String specialCondition = "";
+				List<Integer> defaultDaysOff = new ArrayList<Integer>();
+				for(int i=4;i<nurseInfo.length;i++){
+					try{
+						defaultDaysOff.add(Integer.parseInt(nurseInfo[i]));
+					}catch(NumberFormatException ex){
+						specialCondition = nurseInfo[i]; 
+						System.out.println("Special Condition Configured for employee " + id + " Condition: " + specialCondition);
+					}
+				}
+				nurseMap.put(id, new Employee(id, lastName, firstName, position, defaultShift, specialCondition, defaultDaysOff, year ));
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

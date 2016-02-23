@@ -1,5 +1,8 @@
 package net.calvineric.nursing;
 
+import java.io.IOException;
+import java.util.List;
+
 
 public class Employee {
 	
@@ -8,19 +11,34 @@ public class Employee {
 	private String firstName;
 	private String position;
 	private String defaultShift;
+	private String specialCondition;
+	private List<Integer> defaultDaysOff;
 	private Schedule schedule;
 	
-	public Employee(int id, String lastName, String firstName, String position, String defaultShift, int year) {
+	public Employee(int id, String lastName, String firstName, String position, String defaultShift, String specialCondition, List<Integer> defaultDaysOff, int year) {
 		this.id = id;
 		this.lastName = lastName;
 		this.firstName = firstName;
 		this.position = position;
 		this.defaultShift = defaultShift;
+		this.specialCondition = specialCondition;
+		this.defaultDaysOff = defaultDaysOff;
 		this.schedule = new Schedule(); 
-		this.schedule.addYearlySchedule(new YearlySchedule(year));
+		this.schedule.addYearlySchedule(new YearlySchedule(year));		
 		initializeSchedule();
+		initializeDefaultDaysOff();
 	}
 	
+	private void initializeDefaultDaysOff() {
+		try {
+			ScheduleManager.loadDefaultDaysOff(this);
+		} catch (IOException e) {
+			// TODO Log this
+			System.out.println("Failure Saving after loading Default Day for employee " + this.id);
+			e.printStackTrace();
+		}
+	}
+
 	private void initializeSchedule() {
 		ScheduleManager.loadEmployeeScheduleFromFile(this);
 	}
@@ -63,6 +81,22 @@ public class Employee {
 
 	public void setSchedule(Schedule schedule) {
 		this.schedule = schedule;
+	}
+
+	public List<Integer> getDefaultDaysOff() {
+		return defaultDaysOff;
+	}
+
+	public void setDefaultDaysOff(List<Integer> defaultDaysOff) {
+		this.defaultDaysOff = defaultDaysOff;
+	}
+
+	public String getSpecialCondition() {
+		return specialCondition;
+	}
+
+	public void setSpecialCondition(String specialCondition) {
+		this.specialCondition = specialCondition;
 	}
 	
 }

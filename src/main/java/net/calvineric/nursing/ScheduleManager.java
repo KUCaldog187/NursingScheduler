@@ -9,8 +9,15 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.StringTokenizer;
 
+import net.calvineric.nursing.constants.WorkCodeConstants;
 import net.calvineric.nursing.rules.RulesEngine;
 
 import org.springframework.context.ApplicationContext;
@@ -18,6 +25,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class ScheduleManager {
 	
+	private static final String EVERY_OTHER_WEEKEND = "EOW";
 	private String persistMethod = "FILE";
 	
 	public static boolean loadEmployeeScheduleFromFile(Employee employee){
@@ -98,6 +106,95 @@ public class ScheduleManager {
 		return success;
 	}
 	
+	public static void loadDefaultDaysOff(Employee employee) throws IOException {
+		Calendar calendar = Calendar.getInstance();
+		if(employee.getSpecialCondition().equals(EVERY_OTHER_WEEKEND)){
+			for(YearlySchedule yearlySchedule : employee.getSchedule().getYearlySchedule().values()){
+				List<DailySchedule> weekendList = new ArrayList<DailySchedule>();
+				List<Integer> weekList = buildWeekList(yearlySchedule);
+				Collections.sort(weekList);
+				
+				for (Integer weekofyear : weekList) {
+					Set<DailySchedule> week = yearlySchedule.getWeeks().get(weekofyear);
+					for (DailySchedule dailySchedule : week) {
+						if(dailySchedule.getYearValue() == yearlySchedule.getYearValue()){
+							calendar.set(Calendar.YEAR, dailySchedule.getYearValue());
+							calendar.set(Calendar.MONTH, dailySchedule.getMonthValue());
+							calendar.set(Calendar.DATE, dailySchedule.getDayValue());
+							if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
+								int weeksinyear = calendar.getActualMaximum(Calendar.WEEK_OF_YEAR);
+								int nextWeek = weekofyear+1 > weeksinyear ? 1:weekofyear+1; // HANDLE WEEK 53 LOGIC
+								if(nextWeek == 1){
+									// TODO HANDLE NEXT YEAR 
+								}else{
+									Set<DailySchedule> week2 = yearlySchedule.getWeeks().get(nextWeek);
+									int nextDay = dailySchedule.nextDay(); // HANDLE LAST DAY OF MONTH INTO FIRST DAY OF NEXT MONTH
+									for (DailySchedule dailySchedule2 : week2) {
+										if(dailySchedule2.getDayValue() == nextDay){ 
+											if(dailySchedule.getValue().equals(WorkCodeConstants.NEUTRAL) && dailySchedule2.getValue().equals(WorkCodeConstants.NEUTRAL)){
+												weekendList.add(dailySchedule);
+												weekendList.add(dailySchedule2);
+												break;
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+				
+				for(int i=0; i<weekendList.size();i+=4){ //Every other weekend must increment +4 
+					if(i+1 < weekendList.size()){
+						DailySchedule saturday = weekendList.get(i);
+						DailySchedule sunday = weekendList.get(i+1);
+						if(canSetDefaultWeekendPair(saturday, sunday)){
+							saturday.setValue(WorkCodeConstants.DAY_OFF);
+							sunday.setValue(WorkCodeConstants.DAY_OFF);
+							saturday.setLocked(true);
+							sunday.setLocked(true);
+						}
+					}
+				}
+				saveEmployeeToFile(employee);
+			}
+		}else{
+			for(YearlySchedule yearlySchedule : employee.getSchedule().getYearlySchedule().values()){
+				List<Integer> weekList = buildWeekList(yearlySchedule);
+				Collections.sort(weekList);
+				
+				for (Integer weekofyear : weekList) {
+					Set<DailySchedule> week = yearlySchedule.getWeeks().get(weekofyear);
+					for (DailySchedule dailySchedule : week) {
+						if(dailySchedule.getYearValue() == yearlySchedule.getYearValue()){
+							calendar.set(Calendar.YEAR, dailySchedule.getYearValue());
+							calendar.set(Calendar.MONTH, dailySchedule.getMonthValue());
+							calendar.set(Calendar.DATE, dailySchedule.getDayValue());
+							if(employee.getDefaultDaysOff().contains(calendar.get(Calendar.DAY_OF_WEEK))){
+								if(!dailySchedule.isLocked() && dailySchedule.getValue().equals(WorkCodeConstants.NEUTRAL)){
+									dailySchedule.setValue(WorkCodeConstants.DAY_OFF);
+									dailySchedule.setLocked(true);
+								}
+							}
+						}
+					}
+				}
+			}
+			saveEmployeeToFile(employee);
+		}
+	}
+	
+	private static boolean canSetDefaultWeekendPair(DailySchedule saturday, DailySchedule sunday){
+		boolean canSet = false;
+		if(!saturday.isLocked() && !sunday.isLocked()){
+			if(saturday.getValue().equals(WorkCodeConstants.NEUTRAL) && sunday.getValue().equals(WorkCodeConstants.NEUTRAL)){
+				canSet = true;
+			}
+		}
+
+		return canSet;
+	}
+	
 	public static void main(String[] args) throws IOException, ParseException{
 		
 		ApplicationContext context = new ClassPathXmlApplicationContext("net/calvineric/nursing/bean/Nurses.xml");
@@ -111,8 +208,83 @@ public class ScheduleManager {
 
 	public void setPersistMethod(String persistMethod) {
 		this.persistMethod = persistMethod;
+	}	
+	
+	public static List<Integer> buildWeekList(YearlySchedule yearlySchedule, int quater){
+		
+		int startingMonth = 0;
+		int endingMonth = 0;
+		
+		switch (quater) {
+		case 1:
+			startingMonth = 0;
+			endingMonth = 2;
+			break;
+		case 2:
+			startingMonth = 3;
+			endingMonth = 5;
+			break;
+		case 3:
+			startingMonth = 6;
+			endingMonth = 8;
+			break;
+		case 4:
+			startingMonth = 9;
+			endingMonth = 11;
+			break;
+		default:
+			startingMonth = 0;
+			endingMonth = 2;
+			break;
+		}
+		
+		Set<Integer> weekSet = new HashSet<Integer>();
+		Calendar calendar = Calendar.getInstance();
+		// CHECK WEEKEND PAIRS TO SEE IF BOTH SAT AND SUN ARE OFF. 
+		for(int i=startingMonth; i<=endingMonth; i++){			
+			calendar.set(Calendar.YEAR, yearlySchedule.getYearValue());
+			calendar.set(Calendar.MONTH, i);
+			calendar.set(Calendar.DATE, 1);
+			int numDays = calendar.getActualMaximum(Calendar.DATE);
+			
+			for(int x=1;x<=numDays;x++){
+				calendar.set(Calendar.DATE, x);
+				weekSet.add(calendar.get(Calendar.WEEK_OF_YEAR));
+			}
+		}
+		
+		List<Integer> list = new ArrayList<Integer>();
+		list.addAll(weekSet);
+		
+		
+		return list;
 	}
 	
-	
+	public static List<Integer> buildWeekList(YearlySchedule yearlySchedule){
+		
+		int startingMonth = 0;
+		int endingMonth = 11;
+		
+		Set<Integer> weekSet = new HashSet<Integer>();
+		Calendar calendar = Calendar.getInstance();
+ 
+		for(int i=startingMonth; i<=endingMonth; i++){			
+			calendar.set(Calendar.YEAR, yearlySchedule.getYearValue());
+			calendar.set(Calendar.MONTH, i);
+			calendar.set(Calendar.DATE, 1);
+			int numDays = calendar.getActualMaximum(Calendar.DATE);
+			
+			for(int x=1;x<=numDays;x++){
+				calendar.set(Calendar.DATE, x);
+				weekSet.add(calendar.get(Calendar.WEEK_OF_YEAR));
+			}
+		}
+		
+		List<Integer> list = new ArrayList<Integer>();
+		list.addAll(weekSet);
+		
+		
+		return list;
+	}
 
 }
