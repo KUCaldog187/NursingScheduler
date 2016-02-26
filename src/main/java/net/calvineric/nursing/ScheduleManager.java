@@ -38,7 +38,7 @@ public class ScheduleManager {
 		Charset charset = Charset.forName("US-ASCII");
 		try (BufferedReader reader = Files.newBufferedReader(fullFile, charset)) {
 		    String line = null;
-		    while ((line = reader.readLine()) != null) {
+		    while ((line = reader.readLine()) != null && !line.equals("")) {
 		    	
 				StringTokenizer st = new StringTokenizer(line , "{, }", false);
 				String year = (String) st.nextElement();

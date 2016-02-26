@@ -10,8 +10,10 @@ import net.calvineric.nursing.rules.RulesEngine;
 public class Staffing {
 
 	private static final int LPNS_NEEDED = 2;
+	private static final int CNAS_NEEDED = 7;
 
-	public static void staffingLogicSON(List<Employee> employeeListSON, int month, int year) throws IOException{
+	public static void staffingLogicSON(List<Employee> employeeList, int month, int year) throws IOException{
+		java.util.Collections.shuffle(employeeList);
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
@@ -22,7 +24,7 @@ public class Staffing {
 		boolean nursesStillNeeded = true;
 		do{
 			for(int i=1;i<=daysToGenerate;i++){
-				for(Employee employee : employeeListSON){
+				for(Employee employee : employeeList){
 					Schedule schedule = employee.getSchedule();
 					DailySchedule dailySchedule = schedule.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(i);
 					if(!dailySchedule.isLocked()){
@@ -36,6 +38,7 @@ public class Staffing {
 	}
 	
 	public static void staffingLogicRN(List<Employee> employeeList, int month, int year) throws IOException{
+		java.util.Collections.shuffle(employeeList);
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
@@ -60,7 +63,7 @@ public class Staffing {
 	}
 	
 	public static void staffingLogicLPN(List<Employee> employeeList, int month, int year) throws IOException{
-		
+		java.util.Collections.shuffle(employeeList);
 		int quater = 0;
 		
 		if(month >=0 && month <=2){
@@ -96,6 +99,9 @@ public class Staffing {
 							dailySchedule.setValue(WorkCodeConstants.WORKING);
 							ScheduleManager.saveEmployeeToFile(employee);
 						}
+						if(enoughLPNScheduled(employeeList, year, month, i)){
+							break;
+						}
 					}
 				}
 			}
@@ -120,8 +126,27 @@ public class Staffing {
 			return false;
 		}
 	}
+	
+	private static boolean enoughCNAScheduled(List<Employee> employeeList, int year, int month, int day) {
+		int cnasScheduled = 0;
+		for(Employee employee : employeeList){
+			Schedule schedule = employee.getSchedule();
+			YearlySchedule yearlySchedule = schedule.getYearlySchedule(year);
+			MonthlySchedule monthlySchedule = yearlySchedule.getScheduleForMonth(month);
+			DailySchedule dailySchedule = monthlySchedule.getDailySchedule().get(day);
+			if(dailySchedule.getValue().equals(WorkCodeConstants.WORKING)){
+				cnasScheduled++;
+			}
+		}
+		if(cnasScheduled >= CNAS_NEEDED){
+			return true;
+		}else{
+			return false;
+		}
+	}
 
 	public static void staffingLogicCNA(List<Employee> employeeList, int month, int year) throws IOException{
+		java.util.Collections.shuffle(employeeList);
 		
 		Calendar calendar = Calendar.getInstance();
 		calendar.set(Calendar.YEAR, year);
@@ -132,12 +157,21 @@ public class Staffing {
 		boolean nursesStillNeeded = true;
 		do{
 			for(int i=1;i<=daysToGenerate;i++){
-				for(Employee employee : employeeList){
-					Schedule schedule = employee.getSchedule();
-					DailySchedule dailySchedule = schedule.getYearlySchedule(year).getScheduleForMonth(month).getDailySchedule().get(i);
-					if(!dailySchedule.isLocked()){
-						dailySchedule.setValue(WorkCodeConstants.WORKING);
-						ScheduleManager.saveEmployeeToFile(employee);
+				if(enoughCNAScheduled(employeeList, year, month, i)){
+					continue;
+				}else{
+					for(Employee employee : employeeList){
+						Schedule schedule = employee.getSchedule();
+						YearlySchedule yearlySchedule = schedule.getYearlySchedule(year);
+						MonthlySchedule monthlySchedule = yearlySchedule.getScheduleForMonth(month);
+						DailySchedule dailySchedule = monthlySchedule.getDailySchedule().get(i);
+						if(RulesEngine.isEligibleToWork(dailySchedule)){
+							dailySchedule.setValue(WorkCodeConstants.WORKING);
+							ScheduleManager.saveEmployeeToFile(employee);
+						}
+						if(enoughCNAScheduled(employeeList, year, month, i)){
+							break;
+						}
 					}
 				}
 			}

@@ -303,7 +303,6 @@ public class RulesEngine implements WorkCodeConstants {
 		
 		Calendar calendar = Calendar.getInstance();
 		List<Integer> weekList = ScheduleManager.buildWeekList(yearlySchedule, quater);
-		java.util.Collections.shuffle(weekList);
 		
 		int weekendsOff = 0;
 		
@@ -363,6 +362,7 @@ public class RulesEngine implements WorkCodeConstants {
 		weekendsOff = calculateWeekendsOff(yearlySchedule, quater);
 		
 		List<Integer> sortedList = ScheduleManager.buildWeekList(yearlySchedule, quater);
+		java.util.Collections.shuffle(sortedList);
 		
 		if(weekendsOff >= weekendsOffNeeded){
 			obeys = true;
@@ -432,6 +432,14 @@ public class RulesEngine implements WorkCodeConstants {
 				eligible = obeysDailyRules(dailySchedule); // CHECK IF NOT ALREADY OFF OR LOCKED FOR OTHER REASON
 			}
 		}
+		
+		return eligible;
+	}
+	
+	public static boolean isEligibleToWork(DailySchedule dailySchedule) {
+		boolean eligible = false;
+		
+		eligible = obeysDailyRules(dailySchedule); // CHECK IF NOT ALREADY OFF OR LOCKED FOR OTHER REASON
 		
 		return eligible;
 	}
