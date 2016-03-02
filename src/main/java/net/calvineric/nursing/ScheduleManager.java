@@ -144,7 +144,15 @@ public class ScheduleManager {
 					}
 				}
 				
-				for(int i=0; i<weekendList.size();i+=4){ //Every other weekend must increment +4 
+				int offset = 0;
+				
+				if(employee.getEvenOrOdd().equals("EVEN")){
+					offset = 0;
+				}else if(employee.getEvenOrOdd().equals("ODD")){
+					offset = 2;
+				}
+				
+				for(int i=offset; i<weekendList.size();i+=4){ //Every other weekend must increment +4 
 					if(i+1 < weekendList.size()){
 						DailySchedule saturday = weekendList.get(i);
 						DailySchedule sunday = weekendList.get(i+1);
@@ -184,6 +192,17 @@ public class ScheduleManager {
 		}
 	}
 	
+	private static boolean thisWeekendShouldBeScheduled(Employee employee, int weekofmonth) {
+		boolean shouldBeScheduled = false;
+		
+		if(employee.getEvenOrOdd().equalsIgnoreCase("EVEN") && weekofmonth%2 == 0){
+			shouldBeScheduled = true;
+		}else if(employee.getEvenOrOdd().equalsIgnoreCase("ODD") && weekofmonth%2 != 0){
+			shouldBeScheduled = true;
+		}
+		return shouldBeScheduled;
+	}
+
 	private static boolean canSetDefaultWeekendPair(DailySchedule saturday, DailySchedule sunday){
 		boolean canSet = false;
 		if(!saturday.isLocked() && !sunday.isLocked()){

@@ -33,16 +33,19 @@ public class NursingCollection {
 				String position = nurseInfo[2];
 				String defaultShift = nurseInfo[3];
 				String specialCondition = "";
+				String evenorodd = "";
 				List<Integer> defaultDaysOff = new ArrayList<Integer>();
 				for(int i=4;i<nurseInfo.length;i++){
 					try{
 						defaultDaysOff.add(Integer.parseInt(nurseInfo[i]));
 					}catch(NumberFormatException ex){
-						specialCondition = nurseInfo[i]; 
-						System.out.println("Special Condition Configured for employee " + id + " Condition: " + specialCondition);
+						specialCondition = nurseInfo[i];
+						evenorodd = nurseInfo[i+1];
+						System.out.println("Special Condition Configured for employee " + id + " Condition: " + specialCondition + " " + evenorodd);
+						break;
 					}
 				}
-				nurseMap.put(id, new Employee(id, lastName, firstName, position, defaultShift, specialCondition, defaultDaysOff, year ));
+				nurseMap.put(id, new Employee(id, lastName, firstName, position, defaultShift, specialCondition, evenorodd, defaultDaysOff, year ));
 			}
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

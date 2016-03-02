@@ -14,8 +14,9 @@ public class Employee {
 	private String specialCondition;
 	private List<Integer> defaultDaysOff;
 	private Schedule schedule;
+	private String evenorodd;
 	
-	public Employee(int id, String lastName, String firstName, String position, String defaultShift, String specialCondition, List<Integer> defaultDaysOff, int year) {
+	public Employee(int id, String lastName, String firstName, String position, String defaultShift, String specialCondition, String evenorodd, List<Integer> defaultDaysOff, int year) {
 		this.id = id;
 		this.lastName = lastName;
 		this.firstName = firstName;
@@ -25,6 +26,7 @@ public class Employee {
 		this.defaultDaysOff = defaultDaysOff;
 		this.schedule = new Schedule(); 
 		this.schedule.addYearlySchedule(new YearlySchedule(year));		
+		this.evenorodd = evenorodd;
 		initializeSchedule();
 		initializeDefaultDaysOff();
 	}
@@ -97,6 +99,10 @@ public class Employee {
 
 	public void setSpecialCondition(String specialCondition) {
 		this.specialCondition = specialCondition;
+	}
+
+	public String getEvenOrOdd() {
+		return this.evenorodd;
 	}
 	
 }

@@ -10,7 +10,7 @@ import net.calvineric.nursing.rules.RulesEngine;
 public class Staffing {
 
 	private static final int LPNS_NEEDED = 2;
-	private static final int CNAS_NEEDED = 7;
+	private static final int CNAS_NEEDED = 15;
 
 	public static void staffingLogicSON(List<Employee> employeeList, int month, int year) throws IOException{
 		java.util.Collections.shuffle(employeeList);
