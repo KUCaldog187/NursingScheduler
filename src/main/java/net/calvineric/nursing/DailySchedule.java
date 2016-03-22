@@ -63,4 +63,18 @@ public class DailySchedule {
 		
 	}
 	
+	public boolean isWeekend(){
+		boolean isWeekend = false;
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.set(Calendar.YEAR, this.getYearValue());
+		calendar.set(Calendar.MONTH, this.getMonthValue());
+		calendar.set(Calendar.DATE, this.getDayValue());
+		
+		if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY || calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY){
+			isWeekend = true;
+		}
+		return isWeekend;
+	}
+	
 }

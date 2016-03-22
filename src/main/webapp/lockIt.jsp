@@ -1,11 +1,11 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
     pageEncoding="ISO-8859-1"%>
     
-<body>
+
 <input id="lock" type="hidden" value="${success}">
 <input id="lockid" type="hidden" value="${workerid}">
 <input id="lockday" type="hidden" value="${day}">
-</body>    
+   
 <script type="text/javascript">
 var workerid = $("#lockid").val();
 var day = $("#lockday").val();
@@ -21,6 +21,4 @@ if(lock == "true"){
 }else{
 	$("[workerid='"+workerid+"'][day='"+day+"']").parent().css("background-color", "");
 }
-
-
 </script>

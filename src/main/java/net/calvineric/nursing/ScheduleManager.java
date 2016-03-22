@@ -131,11 +131,9 @@ public class ScheduleManager {
 									int nextDay = dailySchedule.nextDay(); // HANDLE LAST DAY OF MONTH INTO FIRST DAY OF NEXT MONTH
 									for (DailySchedule dailySchedule2 : week2) {
 										if(dailySchedule2.getDayValue() == nextDay){ 
-											if(dailySchedule.getValue().equals(WorkCodeConstants.NEUTRAL) && dailySchedule2.getValue().equals(WorkCodeConstants.NEUTRAL)){
-												weekendList.add(dailySchedule);
-												weekendList.add(dailySchedule2);
-												break;
-											}
+											weekendList.add(dailySchedule);
+											weekendList.add(dailySchedule2);
+											break;
 										}
 									}
 								}

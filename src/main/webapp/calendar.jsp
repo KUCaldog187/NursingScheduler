@@ -25,7 +25,7 @@
 				<c:forEach var="z" begin="1" end="${daysInMonth}">
 					<c:choose>
 						<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].locked}">
-							<td style="background-color: red;">
+							<td class="locked">
 						</c:when>
 						<c:otherwise>
 							<td>
@@ -33,10 +33,24 @@
 					</c:choose>
 					<c:choose>
 					    <c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value.equals('B')}">
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
+ 				    		<c:choose>
+					    		<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].isWeekend()}">
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" class="weekend">
+								</c:when>
+								<c:otherwise>
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
+								</c:otherwise>
+							</c:choose>
 					    </c:when>
 					    <c:otherwise>
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
+   				    		<c:choose>
+					    		<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].isWeekend()}">
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>" class="weekend" />
+								</c:when>
+								<c:otherwise>
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
+								</c:otherwise>
+							</c:choose>
 					    </c:otherwise>
 					</c:choose>
 					</td>
@@ -54,7 +68,7 @@
 				<c:forEach var="z" begin="1" end="${daysInMonth}">
 					<c:choose>
 						<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].locked}">
-							<td style="background-color: red;">
+							<td class="locked">
 						</c:when>
 						<c:otherwise>
 							<td>
@@ -62,10 +76,24 @@
 					</c:choose>
 					<c:choose>
 					    <c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value.equals('B')}">
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
+ 				    		<c:choose>
+					    		<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].isWeekend()}">
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" class="weekend">
+								</c:when>
+								<c:otherwise>
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
+								</c:otherwise>
+							</c:choose>
 					    </c:when>
 					    <c:otherwise>
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
+   				    		<c:choose>
+					    		<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].isWeekend()}">
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>" class="weekend" />
+								</c:when>
+								<c:otherwise>
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
+								</c:otherwise>
+							</c:choose>
 					    </c:otherwise>
 					</c:choose>
 					</td>
@@ -83,7 +111,7 @@
 				<c:forEach var="z" begin="1" end="${daysInMonth}">
 					<c:choose>
 						<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].locked}">
-							<td style="background-color: red;">
+							<td class="locked">
 						</c:when>
 						<c:otherwise>
 							<td>
@@ -91,10 +119,24 @@
 					</c:choose>
 					<c:choose>
 					    <c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value.equals('B')}">
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
+ 				    		<c:choose>
+					    		<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].isWeekend()}">
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" class="weekend">
+								</c:when>
+								<c:otherwise>
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
+								</c:otherwise>
+							</c:choose>
 					    </c:when>
 					    <c:otherwise>
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
+   				    		<c:choose>
+					    		<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].isWeekend()}">
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>" class="weekend" />
+								</c:when>
+								<c:otherwise>
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
+								</c:otherwise>
+							</c:choose>
 					    </c:otherwise>
 					</c:choose>
 					</td>
@@ -112,7 +154,7 @@
 				<c:forEach var="z" begin="1" end="${daysInMonth}">
 					<c:choose>
 						<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].locked}">
-							<td style="background-color: red;">
+							<td class="locked">
 						</c:when>
 						<c:otherwise>
 							<td>
@@ -120,10 +162,24 @@
 					</c:choose>
 					<c:choose>
 					    <c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value.equals('B')}">
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
+ 				    		<c:choose>
+					    		<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].isWeekend()}">
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" class="weekend">
+								</c:when>
+								<c:otherwise>
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value=""/>" >
+								</c:otherwise>
+							</c:choose>
 					    </c:when>
 					    <c:otherwise>
-					       <input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
+   				    		<c:choose>
+					    		<c:when test="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].isWeekend()}">
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>" class="weekend" />
+								</c:when>
+								<c:otherwise>
+									<input workerid="<c:out value="${employee.id}"/>" month="<c:out value="${month}"/>" day="<c:out value="${z}"/>" type="text" style='width:1.5em' value="<c:out value="${employee.schedule.yearlySchedule[year].monthlySchedule[i].dailySchedule[z].value}"/>"  />
+								</c:otherwise>
+							</c:choose>
 					    </c:otherwise>
 					</c:choose>
 					</td>
